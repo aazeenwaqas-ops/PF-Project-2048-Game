@@ -1,0 +1,6 @@
+﻿  code.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  2048 game.vcxproj -> C:\Users\aazee\source\repos\2048 game\x64\Release\2048 game.exe
