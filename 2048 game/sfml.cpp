@@ -1,11 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
-#include <optional>
 using namespace std;
 extern int board[4][4];
 extern int score;
 void setupgame();
+bool moveleft();
+bool moveright();
+bool moveup();
+bool movedown();
+void generatetile();
 
 sf::Color getTileColor(int value){ // selecting tile colours
     if (value == 0){
@@ -40,6 +44,9 @@ int main(){
         cout << "Font could not be loaded!" << endl;
         return -1;
     }
+    sf::Text title(font, "2048", 45);
+    title.setFillColor(sf::Color(217, 240, 255));
+    title.setPosition({ 190.f, 35.f });
     int startX = 40, startY = 150, tileSize = 100, gap = 10;
 
     sf::RectangleShape gameBoard({ 450.f, 450.f });
@@ -48,13 +55,35 @@ int main(){
     sf::RectangleShape tile({ 100.f, 100.f }); //tile
 
     while (window.isOpen()){//game loop
-        while (auto event = window.pollEvent()){
-            if (event->is<sf::Event::Closed>()){
+        while (auto event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
             }
+            if (event->is<sf::Event::KeyPressed>()) {
+                if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Left) {
+                    if (moveleft()) {
+                        generatetile();
+                    }
+                }
+                if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Right) {
+                    if (moveright()) {
+                        generatetile();
+                    }
+                }
+                if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Up) {
+                    if (moveup()) {
+                        generatetile();
+                    }
+                }
+                if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Down) {
+                    if (movedown()) {
+                        generatetile();
+                    }
+                }
+            }
         }
-
         window.clear(background); //clear prev frame
+        window.draw(title);
         window.draw(gameBoard); //draw main board
         for (int row = 0; row < 4; row++){ //draw tiles
             for (int col = 0; col < 4; col++){
