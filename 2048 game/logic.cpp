@@ -186,3 +186,29 @@ bool movedown() {
 	shiftdown();
 	return moved;
 }
+bool checkwin() {
+	for (int row = 0; row < 4; row++) {
+		for (int col = 0; col < 4;col++) {
+			if (board[row][col] == 2048) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+bool checkgameover() { //no empty cell left or no merging possible
+	for (int row = 0; row < 4; row++) {
+		for (int col = 0; col < 4;col++) {
+			if (board[row][col] == 0) {
+				return false;
+			}
+			if (col < 3 && board[row][col] == board[row][col + 1]) {
+				return false;
+			}
+			if (row < 3 && board[row][col] == board[row + 1][col]) {
+				return false;
+			}
+		}
+	}
+	return true;
+}

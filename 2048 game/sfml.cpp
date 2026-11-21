@@ -1,4 +1,3 @@
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
@@ -11,6 +10,8 @@ bool moveright();
 bool moveup();
 bool movedown();
 void generatetile();
+bool checkwin();
+bool checkgameover();
 
 sf::Color getTileColor(int value) { // selecting tile colours
     if (value == 0) {
@@ -40,7 +41,7 @@ int main() {
     sf::Color background(16, 42, 67);
     sf::Font font;
     if (!font.openFromFile("arial.ttf")) {
-        cout << "Font could not be loaded!" << endl;
+        cout << "Font could not be loaded" << endl;
         return -1;
     }
     // title
@@ -49,6 +50,8 @@ int main() {
     title.setPosition({ 190.f, 35.f });
     // start screen
     bool gameStarted = false;
+    bool gamewon = false;
+    bool gameover = false;
     sf::Text instructions(font, "Combine tiles to reach 2048!", 20);
     instructions.setFillColor(sf::Color(217, 240, 255));
     instructions.setPosition({ 115.f, 300.f });
@@ -58,6 +61,15 @@ int main() {
     sf::Text playText(font, "PLAY", 25);
     playText.setFillColor(sf::Color::White);
     playText.setPosition({ 230.f, 415.f });
+    sf::Text resultText(font, "", 35);
+    resultText.setFillColor(sf::Color(217, 240, 255));
+    resultText.setPosition({ 145.f, 280.f });
+    sf::RectangleShape restartButton({ 180.f, 60.f });
+    restartButton.setPosition({ 170.f, 400.f });
+    restartButton.setFillColor(sf::Color(35, 137, 201));
+    sf::Text restartText(font, "PLAY AGAIN", 20);
+    restartText.setFillColor(sf::Color::White);
+    restartText.setPosition({ 190.f, 417.f });
     // grid
     int startX = 40, startY = 150, tileSize = 100, gap = 10;
     sf::RectangleShape gameBoard({ 450.f, 450.f });
@@ -81,12 +93,27 @@ int main() {
                         if (mouseX >= 170 && mouseX <= 350 && mouseY >= 400 && mouseY <= 460) {
                             setupgame();
                             gameStarted = true;
+                            gamewon = false;
+                            gameover = false;
+                        }
+                    }
+                }
+            }
+            else if (gamewon || gameover) {
+                if (event->is<sf::Event::MouseButtonPressed>()) {
+                    if (event->getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left) {
+                        int mouseX = event->getIf<sf::Event::MouseButtonPressed>()->position.x;
+                        int mouseY = event->getIf<sf::Event::MouseButtonPressed>()->position.y;
+                        if (mouseX >= 170 && mouseX <= 350 && mouseY >= 400 && mouseY <= 460) {
+                            setupgame();
+                            gamewon = false;
+                            gameover = false;
                         }
                     }
                 }
             }
             // controls
-            else {
+            else if (!gamewon && !gameover){
                 if (event->is<sf::Event::KeyPressed>()) {
                     if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Left) {
                         if (moveleft()) {
@@ -108,6 +135,12 @@ int main() {
                             generatetile();
                         }
                     }
+                    if (checkwin()) {
+                        gamewon = true;
+                    }
+                    else if (checkgameover()) {
+                        gameover = true;
+                    }
                 }
             }
         }
@@ -117,6 +150,18 @@ int main() {
             window.draw(instructions);
             window.draw(playButton);
             window.draw(playText);
+        }
+        else if (gamewon || gameover) {
+            if (gamewon) {
+                resultText.setString("YOU WON!");
+            }
+            else {
+                resultText.setString("GAME OVER!");
+            }
+            window.draw(title);
+            window.draw(resultText);
+            window.draw(restartButton);
+            window.draw(restartText);
         }
         else {
             scoreText.setString("Score: " + to_string(score));
