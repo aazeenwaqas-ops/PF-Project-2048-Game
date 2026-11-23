@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 using namespace std;
-int board[4][4], score = 0;
+int board[4][4], score = 0, bestscore = 0;
 
 void initializeboard() {
 	for (int row = 0; row < 4;row++) {
@@ -76,6 +77,9 @@ bool moveleft() {
 				board[row][col] = board[row][col] * 2;
 				board[row][col + 1] = 0;
 				score = score + board[row][col];
+				if (score > bestscore) {
+					bestscore = score;
+				}
 				moved = true;
 				col++;
 			}
@@ -110,6 +114,9 @@ bool moveright() {
 				board[row][col] = board[row][col] * 2;
 				board[row][col - 1] = 0;
 				score = score + board[row][col];
+				if (score > bestscore) {
+					bestscore = score;
+				}
 				moved = true;
 				col--;
 			}
@@ -144,6 +151,9 @@ bool moveup() {
 				board[row][col] = board[row][col] * 2;
 				board[row + 1][col] = 0;
 				score = score + board[row][col];
+				if (score > bestscore) {
+					bestscore = score;
+				}
 				moved = true;
 				row++;
 			}
@@ -178,6 +188,9 @@ bool movedown() {
 				board[row][col] = board[row][col] * 2;
 				board[row - 1][col] = 0;
 				score = score + board[row][col];
+				if (score > bestscore) {
+					bestscore = score;
+				}
 				moved = true;
 				row--;
 			}
@@ -211,4 +224,18 @@ bool checkgameover() { //no empty cell left or no merging possible
 		}
 	}
 	return true;
+}
+void loadbestscore() {
+	ifstream file("bestscore.txt");
+	if (file.is_open()) {
+		file >> bestscore;
+		file.close();
+	}
+}
+void savebestscore() {
+	ofstream file("bestscore.txt");
+	if (file.is_open()) {
+		file << bestscore;
+		file.close();
+	}
 }
